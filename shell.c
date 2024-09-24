@@ -61,6 +61,32 @@ char* find_pipe(char input) {
     return NULL;
 }
 
+int find_background(const char *command) {
+    for (int i = 0; command[i] != '\0'; i++) {
+        if (command[i] == '&') {
+            return 1; 
+        }
+    }return 0; 
+}
+
+int launch (char *command , int status) {
+    if(command == "exit"){
+        show_history();
+        printf("Shell ended");
+        return 0;
+    }
+    else if(find_background(command)){
+        
+    }else{
+        status = create_process_and_run(command);
+        if(status == -1){
+            perror("Error: ")
+            return 1;
+        }
+    }
+    return status;
+}
+
 int main(){
     setupSignalHandler();
     shell_loop();
