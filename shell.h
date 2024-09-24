@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <time.h>
+#include <ctype.h>
 
 #define MAX_SIZE 1024
 #define MAX_HIS 200
