@@ -21,6 +21,47 @@ void setupSignalHandler(){
     sigaction(SIGINT, &sig, NULL);
 }
 
+void shell_loop() {
+     int status;
+     char input[MAX_SIZE];
+     do {
+         printf("group_48@aakanksha_palak:~$ ");
+         read_user_input();
+         char* pipe_ptr = find_pipe(input);
+
+         if (pipe_ptr != NULL) {
+            status = pipe_command(input);
+         } else {
+            status = launch(input,status);
+        }
+     } while(status);
+ }
+
+void read_user_input() {
+    if (fgets(input,MAX_SIZE, stdin) != NULL) {
+        int length = strlen(input);
+        for (int i = 0; input[i] != '\0'; i++) {
+            if (input[i] == '\n') {
+                input[i] = '\0';
+                break;
+            }
+        }
+    }else{
+         perror("Error: ");
+         exit(1);
+    }
+}
+
+char* find_pipe(char input) {
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (input[i] == '|') {
+            return (char* )&input[i];
+        }
+    }
+    return NULL;
+}
+
 int main(){
     setupSignalHandler();
+    shell_loop();
 }
