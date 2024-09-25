@@ -8,6 +8,16 @@
 #include <time.h>
 #include <ctype.h>
 
+struct commandInHis{
+    char cmd[1024];
+    pid_t pid;
+    bool background;
+    time_t execTime;
+};
+
+commandInHis history[200];
+int historyCnt = 0;
+
 static void my_handler(int signum) {
     static int counter = 0;
     if (signum == SIGINT) {
@@ -172,7 +182,7 @@ int create_process_and_run(char* cmd, bool bg){
         if(historyCnt++ < 200){
             for(int i = 0; i < 1024; i++) history[historyCnt].cmd[i] = cmd[i];
             history[historyCnt].pid = pid;
-            history[historyCnt].bg = bg? "background":"foreground";
+            history[historyCnt].bg = bg;    
             time(&history[historyCnt].execTime)
         }
         else perror("Error: History Full.")
