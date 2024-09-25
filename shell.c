@@ -173,4 +173,5 @@ int create_process_and_run(char* cmd, bool bg){
 int main(){
     setupSignalHandler();
     shell_loop();
+    return 0;
 }
