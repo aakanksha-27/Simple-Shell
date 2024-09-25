@@ -69,19 +69,35 @@ bool find_background(const char *command) {
     }return false; 
 }
 
-int launch (char *command , int status) {
+int launch (char* command , int status) {
     if(command == "exit"){
         showHistory();
         printf("Shell ended");
         return 0;
     }
     else if(find_background(command)){
-        
+        char copy_command[MAX_SIZE];
+        for (int i = 0; i < sizeof(command) - 1 && command[i] != '\0'; i++) {
+            copy_command[i] = command[i];
+        }copy_command[sizeof(command) - 1] = '\0';
+
+        char* tok = strtok(copy_command, "&");
+        bool fg = false;
+        while (tok != NULL) {
+            trimWhiteSpace(token);
+            status = create_process_and_run(tok, fg);
+            if (status == -1) {
+                perror("Error: ");
+                exit (1);
+            }
+            fg = true;
+            tok = strtok(NULL, "&");
+        }
     }else{
-        status = create_process_and_run(command,false);
+        status = create_process_and_run(command);
         if(status == -1){
             perror("Error: ")
-            return 1;
+            exit (1);
         }
     }
     return status;
