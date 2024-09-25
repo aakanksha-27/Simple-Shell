@@ -78,7 +78,7 @@ int launch (char *command , int status) {
     else if(find_background(command)){
         
     }else{
-        status = create_process_and_run(command);
+        status = create_process_and_run(command,false);
         if(status == -1){
             perror("Error: ")
             return 1;
