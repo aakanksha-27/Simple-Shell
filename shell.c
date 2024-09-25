@@ -27,9 +27,9 @@ void shell_loop() {
      do {
          printf("group_48@aakanksha_palak:~$ ");
          read_user_input();
-         char* pipe_ptr = find_pipe(input);
+         char* pipe = find_pipe(input);
 
-         if (pipe_ptr != NULL) {
+         if (pipe != NULL) {
             status = pipe_command(input);
          } else {
             status = launch(input,status);
