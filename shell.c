@@ -31,7 +31,7 @@ int create_process_and_run(char* cmd, int bg);
 void terminateHistory();
 void showHistory();
 
-static void my_handler(int signum) {
+static void my_handler(int signum) { // signal handler for SIGINT
     static int counter = 0;
     if (signum == SIGINT) {
         char buff1[23] = "\nCaught SIGINT signal\n";
@@ -53,7 +53,7 @@ void setupSignalHandler() {
     sigaction(SIGINT, &sig, NULL);
 }
 
-void shell_loop() {
+void shell_loop() { // for infinite loop running
     int status = 1;
     char input[1024];
     do {
@@ -69,7 +69,7 @@ void shell_loop() {
     } while (status);
 }
 
-void read_user_input(char* input) {
+void read_user_input(char* input) {  // take input
     if (fgets(input, 1024, stdin) != NULL) {
         int length = strlen(input);
         for (int i = 0; input[i] != '\0'; i++) {
@@ -84,7 +84,7 @@ void read_user_input(char* input) {
     }
 }
 
-int pipe_command(char* input) {
+int pipe_command(char* input) {  // pipe commands
     if (historyCnt < 200) {
             strncpy(history[historyCnt].cmd, input, sizeof(history[historyCnt].cmd) - 1);
             history[historyCnt].cmd[sizeof(history[historyCnt].cmd) - 1] = '\0';
@@ -156,7 +156,7 @@ int pipe_command(char* input) {
     return 1;
 }
 
-bool find_background(const char *command) {
+bool find_background(const char *command) {  // find background processes
     for (int i = 0; command[i] != '\0'; i++) {
         if (command[i] == '&') {
             return true;
@@ -165,7 +165,7 @@ bool find_background(const char *command) {
     return false;
 }
 
-int launch(char* command, int status) {
+int launch(char* command, int status) { // launches non piped commands
     if (strcmp(command, "exit") == 0) {
         terminateHistory();
         printf("Shell ended");
@@ -199,7 +199,7 @@ int launch(char* command, int status) {
     return 1;
 }
 
-void trimWhiteSpace(char *str) {
+void trimWhiteSpace(char *str) {  // trimming white spaces
     int len = strlen(str);
     int s = 0;
     int e = len - 1;
@@ -216,7 +216,7 @@ void trimWhiteSpace(char *str) {
     strcpy(str, st);
 }
 
-int create_process_and_run(char* cmd, int bg) {
+int create_process_and_run(char* cmd, int bg) {  // create and run child process using fork
     int status = fork();
     if (status < 0) {
         perror("Error: Could Not Fork");
@@ -268,7 +268,7 @@ int create_process_and_run(char* cmd, int bg) {
     return 1;
 }
 
-void terminateHistory() {
+void terminateHistory() {  // history
     printf("Command History:\n");
     for (int i = 0; i < historyCnt; i++) {
         printf("%d: %s\n", history[i].pid, history[i].cmd);
