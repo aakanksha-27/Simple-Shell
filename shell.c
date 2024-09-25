@@ -26,6 +26,7 @@ static void my_handler(int signum) {
         if (counter++ == 1) {
             char buff2[20] = "Cannot handle more\n";
             write(STDOUT_FILENO, buff2, 20);
+            terminateHistory();
             exit(0);
         }
     }
@@ -89,10 +90,11 @@ bool find_background(const char *command) {
 
 int launch (char* command , int status) {
     if(command == "exit"){
-        showHistory();
+        terminateHistory();
         printf("Shell ended");
         return 0;
-    }else if(command == "history"){
+    }
+    else if(command == "history"){
         showHistory();
     }
     else if(find_background(command)){
@@ -188,6 +190,20 @@ int create_process_and_run(char* cmd, bool bg){
         else perror("Error: History Full.")
     }
     return 0;
+}
+
+void terminateHistory(){
+    printf("Command History:\n");
+    for(int i = 0; i < historyCnt; i++){
+        printf("%d: %s\n", history[i].pid, history[i].cmd);
+        if(history[i].background) printf("In Background\n");
+        else printf("Execution duration: %ld seconds\n", time(NULL) - history[i].execTime);
+    }
+}
+
+void showHistory(){
+    printf("Command History:\n");
+    for(int i = 0; i < historyCnt; i++) printf("%s\n", history[i].cmd);
 }
 
 int main(){
