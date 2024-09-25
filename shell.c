@@ -71,13 +71,64 @@ void read_user_input() {
     }
 }
 
-char* find_pipe(char input) {
-    for (int i = 0; input[i] != '\0'; i++) {
-        if (input[i] == '|') {
-            return (char* )&input[i];
+char* find_pipe(char* input) {
+    return strchr(input, '|');
+}
+
+int pipe_command(char* input) {
+    int count_pipe = 0; 
+    for (int i = 0; i < strlen(input); i++) {
+        if (input[i] == '|') count_pipe++;
+    }
+    char* remaining_input = input;
+    
+    for (int i = 0; i <= count_pipe; i++) {
+        char* command[1024];
+        char* pipe_ptr = find_pipe(remaining_input);
+        
+        if (pipe_ptr != NULL) {
+            *pipe_ptr = '\0';  
+            pipe_ptr++;        
+            while (*pipe_ptr == ' ') pipe_ptr++;  
+        }
+        command[0] = strtok(remaining_input, " ");
+        int j = 1;
+        while ((command[j] = strtok(NULL, " ")) != NULL) {
+            j++;
+        }
+        //command[j] = NULL;  
+
+        int fd[2];
+        if (pipe(fd) == -1) {
+            perror("Error: Pipe failed");
+            exit(1);
+        }
+        int rc = fork();
+        if (rc == -1) {
+            perror("Error: Fork failed");
+            exit(1);
+        } else if (rc == 0) {  
+            if (pipe_ptr != NULL) {
+                close(fd[0]);                
+                dup2(fd[1], STDOUT_FILENO);  
+                close(fd[1]);                
+            }
+            execvp(command[0], command);  
+            perror("Error executing command");
+            exit(1);
+        }
+
+        close(fd[1]);  
+        dup2(fd[0], STDIN_FILENO);  
+        close(fd[0]);  
+        wait(NULL);  
+        
+        if (pipe_ptr != NULL) {
+            remaining_input = pipe_ptr; 
         }
     }
-    return NULL;
+
+    return 0;
 }
 
 bool find_background(const char *command) {
