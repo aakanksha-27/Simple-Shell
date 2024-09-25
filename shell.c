@@ -71,7 +71,7 @@ int find_background(const char *command) {
 
 int launch (char *command , int status) {
     if(command == "exit"){
-        show_history();
+        showHistory();
         printf("Shell ended");
         return 0;
     }
