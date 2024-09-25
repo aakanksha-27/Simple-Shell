@@ -61,12 +61,12 @@ char* find_pipe(char input) {
     return NULL;
 }
 
-int find_background(const char *command) {
+bool find_background(const char *command) {
     for (int i = 0; command[i] != '\0'; i++) {
         if (command[i] == '&') {
-            return 1; 
+            return true; 
         }
-    }return 0; 
+    }return false; 
 }
 
 int launch (char *command , int status) {
