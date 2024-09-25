@@ -20,6 +20,7 @@ Limitations:
 Contributions:
 ------------
 Aakanksha(2023004): History implementation, Signal handling, Trim white spaces, Create process & run, History displays, Error handling
+
 Palak(2023363): Shell loop, Reading user input, Pipe command, Launch command, Error handling
 
 
