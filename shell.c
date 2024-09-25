@@ -80,16 +80,28 @@ void read_user_input(char* input) {
         }
     } else {
         perror("Error: Unable to take input ");
-        exit(1);
+        exit(0);
     }
 }
 
 int pipe_command(char* input) {
+    if (historyCnt < 200) {
+            strncpy(history[historyCnt].cmd, input, sizeof(history[historyCnt].cmd) - 1);
+            history[historyCnt].cmd[sizeof(history[historyCnt].cmd) - 1] = '\0';
+            time(&history[historyCnt].execTime);
+            historyCnt++;
+    } else {
+        perror("Error: History Full.");
+    }
+
+
     int count_pipe = 0;
     for (int i = 0; i < strlen(input); i++) {
         if (input[i] == '|') count_pipe++;
     }
     char* remaining_input = input;
+    int original_stdin = dup(STDIN_FILENO);
+    int original_stdout = dup(STDOUT_FILENO);
 
     for (int i = 0; i <= count_pipe; i++) {
         char* command[1024];
@@ -105,7 +117,7 @@ int pipe_command(char* input) {
         while ((command[j] = strtok(NULL, " ")) != NULL) {
             j++;
         }
-        //command[j] = NULL;
+        command[j] = NULL;
 
         int fd[2];
         if (pipe(fd) == -1) {
@@ -136,6 +148,10 @@ int pipe_command(char* input) {
             remaining_input = pipe_ptr;
         }
     }
+    dup2(original_stdin, STDIN_FILENO);
+    dup2(original_stdout, STDOUT_FILENO);
+    close(original_stdin);
+    close(original_stdout);
 
     return 1;
 }
@@ -257,7 +273,7 @@ void terminateHistory() {
     for (int i = 0; i < historyCnt; i++) {
         printf("%d: %s\n", history[i].pid, history[i].cmd);
         if (history[i].background) printf("In Background\n");
-        else printf("Execution duration: %ld seconds\n", time(NULL) - history[i].execTime);
+        else printf("Execution duration: %ld ms\n", time(NULL) - history[i].execTime);
     }
 }
 
