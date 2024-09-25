@@ -1,4 +1,12 @@
-#include shell.h
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <time.h>
+#include <ctype.h>
 
 static void my_handler(int signum) {
     static int counter = 0;
@@ -162,7 +170,7 @@ int create_process_and_run(char* cmd, bool bg){
         }
 
         if(historyCnt++ < 200){
-            history[historyCnt].cmd = cmd;
+            for(int i = 0; i < 1024; i++) history[historyCnt].cmd[i] = cmd[i];
             history[historyCnt].pid = pid;
             history[historyCnt].bg = bg? "background":"foreground";
             time(&history[historyCnt].execTime)
