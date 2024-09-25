@@ -54,7 +54,7 @@ void setupSignalHandler() {
 }
 
 void shell_loop() {
-    int status;
+    int status = 1;
     char input[1024];
     do {
         printf("group_48@aakanksha_palak:~$ ");
@@ -79,7 +79,7 @@ void read_user_input(char* input) {
             }
         }
     } else {
-        perror("Error: ");
+        perror("Error: Unable to take input ");
         exit(1);
     }
 }
@@ -137,7 +137,7 @@ int pipe_command(char* input) {
         }
     }
 
-    return 0;
+    return 1;
 }
 
 bool find_background(const char *command) {
@@ -167,7 +167,7 @@ int launch(char* command, int status) {
             trimWhiteSpace(tok);
             status = create_process_and_run(tok, fg);
             if (status == -1) {
-                perror("Error: ");
+                perror("Error: Unable to create process and run");
                 exit(1);
             }
             fg = 1;
@@ -176,11 +176,11 @@ int launch(char* command, int status) {
     } else {
         status = create_process_and_run(command, 0);
         if (status == -1) {
-            perror("Error: ");
+            perror("Error: Unable to create process and run ");
             exit(1);
         }
     }
-    return status;
+    return 1;
 }
 
 void trimWhiteSpace(char *str) {
@@ -249,7 +249,7 @@ int create_process_and_run(char* cmd, int bg) {
             perror("Error: History Full.");
         }
     }
-    return 0;
+    return 1;
 }
 
 void terminateHistory() {
