@@ -23,7 +23,7 @@ void setupSignalHandler(){
 
 void shell_loop() {
      int status;
-     char input[MAX_SIZE];
+     char input[1024];
      do {
          printf("group_48@aakanksha_palak:~$ ");
          read_user_input();
@@ -38,7 +38,7 @@ void shell_loop() {
  }
 
 void read_user_input() {
-    if (fgets(input,MAX_SIZE, stdin) != NULL) {
+    if (fgets(input,1024, stdin) != NULL) {
         int length = strlen(input);
         for (int i = 0; input[i] != '\0'; i++) {
             if (input[i] == '\n') {
@@ -74,9 +74,11 @@ int launch (char* command , int status) {
         showHistory();
         printf("Shell ended");
         return 0;
+    }else if(command == "history"){
+        showHistory();
     }
     else if(find_background(command)){
-        char copy_command[MAX_SIZE];
+        char copy_command[1024];
         for (int i = 0; i < sizeof(command) - 1 && command[i] != '\0'; i++) {
             copy_command[i] = command[i];
         }copy_command[sizeof(command) - 1] = '\0';
