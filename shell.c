@@ -94,7 +94,7 @@ int launch (char* command , int status) {
             tok = strtok(NULL, "&");
         }
     }else{
-        status = create_process_and_run(command);
+        status = create_process_and_run(command,false);
         if(status == -1){
             perror("Error: ")
             exit (1);
