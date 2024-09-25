@@ -120,6 +120,56 @@ void trimWhiteSpace(char *str){
     strcpy(str,st);
 }
 
+int create_process_and_run(char* cmd, bool bg){
+    int status = fork();
+    if(status < 0){
+        perror("Error: Could Not Fork");
+        exit(1);
+    }
+    if (status == 0){
+        if (bg){
+            if(setsid() == -1){
+                perror("Error: Setsid Error");
+                exit(1);
+            }
+        }
+        char* parameters[1024];
+        char* tok = strtok(cmd, " ");
+
+        int idx = 0;
+        while(tok != NULL){
+            parameters[idx++] = tok;
+            tok = strtok(NULL," ");
+        }
+        parameters[idx] = NULL;
+
+        if(execvp(parameters[0],parameters) == -1){
+            perror("Error: Execution Error");
+            exit(1);
+        }
+    }
+
+    else {
+        if (!bg){
+            int status;
+            int pid = wait(&status);
+            if(pid == -1){
+                perror("Error: Wait Failed");
+                exit(1);
+            }
+        }
+
+        if(historyCnt++ < 200){
+            history[historyCnt].cmd = cmd;
+            history[historyCnt].pid = pid;
+            history[historyCnt].bg = bg? "background":"foreground";
+            time(&history[historyCnt].execTime)
+        }
+        else perror("Error: History Full.")
+    }
+    return 0;
+}
+
 int main(){
     setupSignalHandler();
     shell_loop();
