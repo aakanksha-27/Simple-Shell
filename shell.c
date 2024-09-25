@@ -87,6 +87,23 @@ int launch (char *command , int status) {
     return status;
 }
 
+void trimWhiteSpace(char *str){
+    int len = strlen(str);
+    int s = 0;
+    int e = len - 1;
+
+    while(isspace(str[s]) && s < len) s++;
+    while(isspace(str[e]) && e >= 0) e--;
+
+    char* st;
+    int j = 0;
+    for (int i = s; i <= e; i++){
+        st[j++] = str[i];
+    }
+    st[j] = '\0';
+    strcpy(str,st);
+}
+
 int main(){
     setupSignalHandler();
     shell_loop();
