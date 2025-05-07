@@ -1,4 +1,4 @@
-# OS-Assignment-2
+# Simple Shell
 
 Implementation: 
 --------------
